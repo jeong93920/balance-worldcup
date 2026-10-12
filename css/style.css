@@ -1,1 +1,170 @@
 /* 밸런스 게임 월드컵 스타일 */
+:root {
+  --bg: #f6f5fb;
+  --surface: #ffffff;
+  --text: #1d1b29;
+  --muted: #6b6880;
+  --border: #e3e1ee;
+  --primary: #6c4cf1;
+  --primary-text: #ffffff;
+  --left: #ff5d73;
+  --right: #3a86ff;
+  --shadow: 0 6px 20px rgba(40, 30, 90, 0.08);
+  --radius: 18px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14131c;
+    --surface: #1f1d2b;
+    --text: #f1effa;
+    --muted: #a19db8;
+    --border: #2f2c40;
+    --primary: #8b70ff;
+    --shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Pretendard', 'Noto Sans KR', sans-serif;
+  line-height: 1.5;
+}
+
+#app {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+h1,
+h2 {
+  margin: 0 0 8px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* 버튼 */
+.btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  padding: 12px 22px;
+  border-radius: 999px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+  transform: none;
+}
+
+.btn.primary {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--primary-text);
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--muted);
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 32px 24px;
+  text-align: center;
+}
+
+/* 홈 */
+.hero {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.hero h1 {
+  font-size: clamp(1.8rem, 6vw, 2.6rem);
+}
+
+.hero p {
+  color: var(--muted);
+  margin: 0;
+}
+
+.topic-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.topic-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 16px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  font: inherit;
+  transition: transform 0.15s, border-color 0.15s;
+}
+
+.topic-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+}
+
+.topic-emoji {
+  font-size: 2.6rem;
+}
+
+.topic-title {
+  font-weight: 700;
+  font-size: 1.1rem;
+}
+
+.topic-desc {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+/* 설정 */
+.setup {
+  max-width: 420px;
+  margin: 0 auto;
+}
+
+.setup-emoji {
+  font-size: 3.4rem;
+}
+
+.size-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin: 16px 0 20px;
+}
