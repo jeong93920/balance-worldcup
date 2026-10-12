@@ -168,3 +168,126 @@ h2 {
   gap: 12px;
   margin: 16px 0 20px;
 }
+
+/* 대결 */
+.match-head {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.match-head h2 {
+  font-size: 2rem;
+}
+
+.match-head small {
+  font-size: 1rem;
+  color: var(--muted);
+  font-weight: 500;
+  margin-left: 6px;
+}
+
+.badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+
+.progress {
+  height: 8px;
+  background: var(--border);
+  border-radius: 999px;
+  overflow: hidden;
+  max-width: 420px;
+  margin: 8px auto 0;
+}
+
+.progress-bar {
+  height: 100%;
+  background: var(--primary);
+  transition: width 0.3s;
+}
+
+.versus {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  gap: 16px;
+}
+
+.choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 300px;
+  padding: 24px 16px;
+  border: 3px solid transparent;
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  font: inherit;
+  cursor: pointer;
+  transition: transform 0.2s, border-color 0.2s, opacity 0.3s;
+}
+
+.choice.left:hover {
+  border-color: var(--left);
+  transform: translateY(-6px) rotate(-1deg);
+}
+
+.choice.right:hover {
+  border-color: var(--right);
+  transform: translateY(-6px) rotate(1deg);
+}
+
+.choice-emoji {
+  font-size: 4rem;
+}
+
+.choice-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+  word-break: keep-all;
+}
+
+.choice-key {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.choice.picked {
+  transform: scale(1.06);
+}
+
+.choice.left.picked {
+  border-color: var(--left);
+}
+
+.choice.right.picked {
+  border-color: var(--right);
+}
+
+.choice.dropped {
+  opacity: 0.15;
+  transform: scale(0.92);
+}
+
+.vs {
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--primary);
+}
+
+.match-actions {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-top: 28px;
+}

@@ -72,7 +72,85 @@ function renderSetup(topic) {
 
 function startGame(size) {
   state.tournament = new Tournament(state.topic.items, size);
-  render(`<p class="panel">${state.tournament.roundName} 시작! (대결 화면 준비 중)</p>`);
+  renderMatch();
 }
+
+// ---------- 대결 ----------
+function choiceCard(item, side) {
+  return `
+    <button class="choice ${side === 0 ? 'left' : 'right'}" data-side="${side}">
+      <span class="choice-emoji">${item.emoji || '❔'}</span>
+      <span class="choice-text">${escapeHtml(item.text)}</span>
+      <span class="choice-key">${side === 0 ? '← 키' : '→ 키'}</span>
+    </button>`;
+}
+
+function renderMatch() {
+  const t = state.tournament;
+  if (t.isFinished) return renderResult();
+
+  const [a, b] = t.pair;
+  const matchLabel = t.roundSize === 2 ? '최종 결승전' : `${t.matchIndex + 1} / ${t.matchesInRound}`;
+
+  render(`
+    <section class="match">
+      <div class="match-head">
+        <span class="badge">${state.topic.emoji} ${escapeHtml(state.topic.title)}</span>
+        <h2>${t.roundName} <small>${matchLabel}</small></h2>
+        <div class="progress"><div class="progress-bar" style="width:${t.progress * 100}%"></div></div>
+      </div>
+      <div class="versus">
+        ${choiceCard(a, 0)}
+        <div class="vs">VS</div>
+        ${choiceCard(b, 1)}
+      </div>
+      <div class="match-actions">
+        <button class="btn" data-action="undo" ${t.canUndo ? '' : 'disabled'}>↶ 되돌리기</button>
+        <button class="btn ghost" data-action="quit">그만하기</button>
+      </div>
+    </section>
+  `);
+
+  app.querySelectorAll('[data-side]').forEach((btn) =>
+    btn.addEventListener('click', () => choose(Number(btn.dataset.side)))
+  );
+  app.querySelector('[data-action="undo"]').addEventListener('click', undo);
+  app.querySelector('[data-action="quit"]').addEventListener('click', () => {
+    if (confirm('진행 중인 월드컵을 그만할까요?')) renderHome();
+  });
+}
+
+let choosing = false; // 선택 애니메이션 중 중복 클릭 방지
+
+function choose(side) {
+  if (choosing || !state.tournament || state.tournament.isFinished) return;
+  choosing = true;
+  const cards = app.querySelectorAll('.choice');
+  cards[side].classList.add('picked');
+  cards[1 - side].classList.add('dropped');
+  setTimeout(() => {
+    choosing = false;
+    state.tournament.pick(side);
+    renderMatch();
+  }, 450);
+}
+
+function undo() {
+  if (choosing || !state.tournament?.canUndo) return;
+  state.tournament.undo();
+  renderMatch();
+}
+
+function renderResult() {
+  render(`<p class="panel">🏆 ${escapeHtml(state.tournament.champion.text)} 우승! (결과 화면 준비 중)</p>`);
+}
+
+// 키보드: ← / → 선택, Backspace 되돌리기
+document.addEventListener('keydown', (e) => {
+  if (!app.querySelector('.versus')) return;
+  if (e.key === 'ArrowLeft') choose(0);
+  else if (e.key === 'ArrowRight') choose(1);
+  else if (e.key === 'Backspace') undo();
+});
 
 renderHome();
