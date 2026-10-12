@@ -408,3 +408,88 @@ h2 {
   color: var(--muted);
   text-decoration: line-through;
 }
+
+/* 나만의 월드컵 */
+.create-card {
+  border-style: dashed;
+  border-width: 2px;
+}
+
+.topic-wrap {
+  position: relative;
+  display: grid;
+}
+
+.topic-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background: var(--border);
+  color: var(--muted);
+  cursor: pointer;
+}
+
+.section-title {
+  margin: 32px 0 12px;
+}
+
+.create {
+  max-width: 560px;
+  margin: 0 auto;
+  text-align: left;
+}
+
+.create h2,
+.create > p {
+  text-align: center;
+}
+
+.create label {
+  display: block;
+  font-weight: 600;
+  margin-top: 16px;
+}
+
+.create input,
+.create textarea {
+  display: block;
+  width: 100%;
+  margin-top: 6px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+  font-weight: 400;
+  resize: vertical;
+}
+
+.create input:focus,
+.create textarea:focus {
+  outline: 2px solid var(--primary);
+  border-color: transparent;
+}
+
+.count {
+  float: right;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.count.ok {
+  color: var(--primary);
+}
+
+.error {
+  color: var(--left);
+  text-align: center;
+}
+
+.create .result-actions {
+  margin-top: 20px;
+}

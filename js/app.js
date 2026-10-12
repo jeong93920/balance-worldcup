@@ -22,28 +22,112 @@ function renderHome() {
   state.topic = null;
   state.tournament = null;
 
-  const cards = TOPICS.map(
-    (t) => `
-      <button class="topic-card" data-topic="${t.id}">
-        <span class="topic-emoji">${t.emoji}</span>
-        <span class="topic-title">${escapeHtml(t.title)}</span>
-        <span class="topic-desc">${escapeHtml(t.desc)}</span>
-      </button>`
-  ).join('');
+  const topicCard = (t, custom) => `
+      <div class="topic-wrap">
+        <button class="topic-card" data-topic="${t.id}">
+          <span class="topic-emoji">${t.emoji}</span>
+          <span class="topic-title">${escapeHtml(t.title)}</span>
+          <span class="topic-desc">${escapeHtml(t.desc)}</span>
+        </button>
+        ${custom ? `<button class="topic-delete" data-delete="${t.id}" aria-label="삭제">✕</button>` : ''}
+      </div>`;
+
+  const customTopics = loadCustomTopics();
 
   render(`
     <header class="hero">
       <h1>⚖️ 밸런스 게임 월드컵</h1>
       <p>둘 중 하나만 고를 수 있다면? 끝까지 살아남는 선택지를 가려보세요.</p>
     </header>
-    <section class="topic-grid">${cards}</section>
+    <section class="topic-grid">
+      ${TOPICS.map((t) => topicCard(t, false)).join('')}
+      <button class="topic-card create-card" data-action="create">
+        <span class="topic-emoji">✏️</span>
+        <span class="topic-title">나만의 월드컵 만들기</span>
+        <span class="topic-desc">선택지를 직접 입력해요</span>
+      </button>
+    </section>
+    ${
+      customTopics.length
+        ? `<h3 class="section-title">내가 만든 월드컵</h3>
+           <section class="topic-grid">${customTopics.map((t) => topicCard(t, true)).join('')}</section>`
+        : ''
+    }
   `);
 
   app.querySelectorAll('[data-topic]').forEach((btn) =>
+    btn.addEventListener('click', () => renderSetup(findTopic(btn.dataset.topic)))
+  );
+  app.querySelectorAll('[data-delete]').forEach((btn) =>
     btn.addEventListener('click', () => {
-      renderSetup(TOPICS.find((t) => t.id === btn.dataset.topic));
+      if (confirm('이 월드컵을 삭제할까요?')) {
+        deleteCustomTopic(btn.dataset.delete);
+        renderHome();
+      }
     })
   );
+  app.querySelector('[data-action="create"]').addEventListener('click', renderCreate);
+}
+
+// ---------- 만들기: 나만의 월드컵 ----------
+// 한 줄에 하나씩 입력. 줄 맨 앞에 이모지를 쓰면 카드 이모지로 사용한다.
+function parseItems(text) {
+  const emojiPrefix = /^(\p{Extended_Pictographic}(?:️|‍\p{Extended_Pictographic})*)\s*/u;
+  const seen = new Set();
+  return text
+    .split('\n')
+    .map((line) => line.trim())
+    .filter(Boolean)
+    .map((line) => {
+      const match = line.match(emojiPrefix);
+      return match ? { emoji: match[1], text: line.slice(match[0].length).trim() } : { emoji: '⭐', text: line };
+    })
+    .filter((item) => item.text && !seen.has(item.text) && seen.add(item.text));
+}
+
+function renderCreate() {
+  render(`
+    <section class="panel create">
+      <h2>✏️ 나만의 월드컵 만들기</h2>
+      <p class="muted">선택지를 한 줄에 하나씩, 8개 이상 입력하세요. 16개 이상이면 16강도 가능해요.</p>
+      <label>제목
+        <input id="create-title" maxlength="30" placeholder="예) 우리 과 극한 선택" />
+      </label>
+      <label>선택지 <span class="count" id="create-count">0개</span>
+        <textarea id="create-items" rows="12" placeholder="🍕 평생 피자만 먹기&#10;🏖️ 평생 여름만 계속되기&#10;..."></textarea>
+      </label>
+      <p class="error" id="create-error" hidden></p>
+      <div class="result-actions">
+        <button class="btn primary" data-action="save">저장하고 시작</button>
+        <button class="btn ghost" data-action="home">취소</button>
+      </div>
+    </section>
+  `);
+
+  const titleInput = app.querySelector('#create-title');
+  const itemsInput = app.querySelector('#create-items');
+  const count = app.querySelector('#create-count');
+  const error = app.querySelector('#create-error');
+
+  itemsInput.addEventListener('input', () => {
+    const n = parseItems(itemsInput.value).length;
+    count.textContent = `${n}개`;
+    count.classList.toggle('ok', n >= 8);
+  });
+
+  app.querySelector('[data-action="home"]').addEventListener('click', renderHome);
+  app.querySelector('[data-action="save"]').addEventListener('click', () => {
+    const title = titleInput.value.trim();
+    const items = parseItems(itemsInput.value);
+    const problem = !title ? '제목을 입력해주세요.' : items.length < 8 ? `선택지가 ${8 - items.length}개 더 필요해요.` : '';
+    error.hidden = !problem;
+    error.textContent = problem;
+    if (problem) return;
+
+    const topic = { id: `custom-${Date.now()}`, title, emoji: '✏️', desc: `직접 만든 선택지 ${items.length}개`, items };
+    saveCustomTopic(topic);
+    renderSetup(topic);
+  });
 }
 
 // ---------- 설정: 라운드 수 선택 ----------
