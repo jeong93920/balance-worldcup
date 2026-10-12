@@ -141,8 +141,69 @@ function undo() {
   renderMatch();
 }
 
+// ---------- 결과 ----------
+function itemLabel(item) {
+  return `${item.emoji || '❔'} ${escapeHtml(item.text)}`;
+}
+
+function renderBracket(t) {
+  return t.bracket
+    .map(
+      (round) => `
+      <div class="bracket-round">
+        <h4>${round.name}</h4>
+        <ul>
+          ${round.matches
+            .map(
+              (m) => `
+            <li>
+              <span class="${m.winner === m.a ? 'win' : 'lose'}">${itemLabel(m.a)}</span>
+              <span class="bracket-vs">vs</span>
+              <span class="${m.winner === m.b ? 'win' : 'lose'}">${itemLabel(m.b)}</span>
+            </li>`
+            )
+            .join('')}
+        </ul>
+      </div>`
+    )
+    .join('');
+}
+
 function renderResult() {
-  render(`<p class="panel">🏆 ${escapeHtml(state.tournament.champion.text)} 우승! (결과 화면 준비 중)</p>`);
+  const t = state.tournament;
+  const champ = t.champion;
+
+  render(`
+    <section class="result">
+      <span class="badge">${state.topic.emoji} ${escapeHtml(state.topic.title)} · ${t.size}강</span>
+      <div class="champion">
+        <div class="trophy">🏆</div>
+        <p class="muted">나의 최종 1위</p>
+        <div class="champion-emoji">${champ.emoji || '❔'}</div>
+        <h2 class="champion-text">${escapeHtml(champ.text)}</h2>
+      </div>
+      <div class="podium">
+        <div class="podium-item"><span>🥈 준우승</span><strong>${itemLabel(t.runnerUp)}</strong></div>
+        ${t.semifinalists
+          .map((s) => `<div class="podium-item"><span>🥉 4강</span><strong>${itemLabel(s)}</strong></div>`)
+          .join('')}
+      </div>
+      <div class="result-actions">
+        <button class="btn primary" data-action="again">🔁 다시하기</button>
+        <button class="btn" data-action="bracket">📋 대진표 보기</button>
+        <button class="btn" data-action="home">🏠 홈으로</button>
+      </div>
+      <div class="bracket" hidden>${renderBracket(t)}</div>
+    </section>
+  `);
+
+  app.querySelector('[data-action="again"]').addEventListener('click', () => startGame(t.size));
+  app.querySelector('[data-action="home"]').addEventListener('click', renderHome);
+  app.querySelector('[data-action="bracket"]').addEventListener('click', (e) => {
+    const bracket = app.querySelector('.bracket');
+    bracket.hidden = !bracket.hidden;
+    e.currentTarget.textContent = bracket.hidden ? '📋 대진표 보기' : '📋 대진표 접기';
+  });
 }
 
 // 키보드: ← / → 선택, Backspace 되돌리기

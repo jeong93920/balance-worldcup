@@ -291,3 +291,120 @@ h2 {
   gap: 12px;
   margin-top: 28px;
 }
+
+/* 결과 */
+.result {
+  text-align: center;
+}
+
+.champion {
+  background: var(--surface);
+  border: 3px solid var(--primary);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px 20px;
+  max-width: 480px;
+  margin: 12px auto 20px;
+}
+
+.trophy {
+  font-size: 3rem;
+}
+
+.champion p {
+  margin: 0;
+}
+
+.champion-emoji {
+  font-size: 4.5rem;
+  margin: 8px 0;
+}
+
+.champion-text {
+  font-size: 1.6rem;
+  word-break: keep-all;
+}
+
+.podium {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.podium-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+  padding: 14px 18px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+}
+
+.podium-item span {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.result-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* 대진표 */
+.bracket {
+  margin-top: 28px;
+  display: grid;
+  gap: 16px;
+  text-align: left;
+}
+
+.bracket-round {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 16px 20px;
+}
+
+.bracket-round h4 {
+  margin: 0 0 8px;
+  color: var(--primary);
+}
+
+.bracket-round ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.bracket-round li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+  border-top: 1px dashed var(--border);
+}
+
+.bracket-round li:first-child {
+  border-top: none;
+}
+
+.bracket-vs {
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.win {
+  font-weight: 700;
+}
+
+.lose {
+  color: var(--muted);
+  text-decoration: line-through;
+}
