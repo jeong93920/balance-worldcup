@@ -11,4 +11,4 @@
 - [x] 7. 나만의 월드컵 만들기 (직접 입력, localStorage 저장)
 - [x] 8. 나의 기록 (주제별 우승 통계) + 결과 공유
 - [x] 9. 디자인 다듬기 (애니메이션, 모바일 반응형, 다크 모드)
-- [ ] 10. GitHub Pages 배포 및 README 정리
+- [x] 10. GitHub Pages 배포 및 README 정리
