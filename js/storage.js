@@ -34,3 +34,26 @@ function deleteCustomTopic(id) {
 function findTopic(id) {
   return TOPICS.find((t) => t.id === id) || loadCustomTopics().find((t) => t.id === id);
 }
+
+// ---------- 나의 기록 ----------
+// { [topicId]: { title, emoji, plays, wins: { [선택지 텍스트]: { emoji, count } } } }
+const RECORDS_KEY = 'bwc.records';
+
+function loadRecords() {
+  return Storage.get(RECORDS_KEY, {});
+}
+
+function addRecord(topic, champion) {
+  const records = loadRecords();
+  const record = records[topic.id] || { title: topic.title, emoji: topic.emoji, plays: 0, wins: {} };
+  record.plays++;
+  const win = record.wins[champion.text] || { emoji: champion.emoji, count: 0 };
+  win.count++;
+  record.wins[champion.text] = win;
+  records[topic.id] = record;
+  Storage.set(RECORDS_KEY, records);
+}
+
+function clearRecords() {
+  Storage.set(RECORDS_KEY, {});
+}

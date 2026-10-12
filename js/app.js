@@ -38,6 +38,7 @@ function renderHome() {
     <header class="hero">
       <h1>⚖️ 밸런스 게임 월드컵</h1>
       <p>둘 중 하나만 고를 수 있다면? 끝까지 살아남는 선택지를 가려보세요.</p>
+      <button class="btn records-btn" data-action="records">📊 나의 기록</button>
     </header>
     <section class="topic-grid">
       ${TOPICS.map((t) => topicCard(t, false)).join('')}
@@ -67,6 +68,7 @@ function renderHome() {
     })
   );
   app.querySelector('[data-action="create"]').addEventListener('click', renderCreate);
+  app.querySelector('[data-action="records"]').addEventListener('click', renderRecords);
 }
 
 // ---------- 만들기: 나만의 월드컵 ----------
@@ -256,6 +258,10 @@ function renderBracket(t) {
 function renderResult() {
   const t = state.tournament;
   const champ = t.champion;
+  if (!t.recorded) {
+    addRecord(state.topic, champ);
+    t.recorded = true;
+  }
 
   render(`
     <section class="result">
@@ -274,6 +280,7 @@ function renderResult() {
       </div>
       <div class="result-actions">
         <button class="btn primary" data-action="again">🔁 다시하기</button>
+        <button class="btn" data-action="share">📤 결과 공유</button>
         <button class="btn" data-action="bracket">📋 대진표 보기</button>
         <button class="btn" data-action="home">🏠 홈으로</button>
       </div>
@@ -283,10 +290,92 @@ function renderResult() {
 
   app.querySelector('[data-action="again"]').addEventListener('click', () => startGame(t.size));
   app.querySelector('[data-action="home"]').addEventListener('click', renderHome);
+  app.querySelector('[data-action="share"]').addEventListener('click', () => shareResult(t));
   app.querySelector('[data-action="bracket"]').addEventListener('click', (e) => {
     const bracket = app.querySelector('.bracket');
     bracket.hidden = !bracket.hidden;
     e.currentTarget.textContent = bracket.hidden ? '📋 대진표 보기' : '📋 대진표 접기';
+  });
+}
+
+function shareResult(t) {
+  const text = [
+    `⚖️ 밸런스 게임 월드컵 [${state.topic.title} ${t.size}강]`,
+    `🏆 1위: ${t.champion.text}`,
+    `🥈 2위: ${t.runnerUp.text}`,
+    `🥉 4강: ${t.semifinalists.map((s) => s.text).join(', ')}`,
+    location.protocol.startsWith('http') ? location.href : '',
+  ]
+    .filter(Boolean)
+    .join('\n');
+
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(text).then(
+      () => toast('결과를 복사했어요! 친구에게 붙여넣어 보세요 📋'),
+      () => prompt('아래 내용을 복사하세요', text)
+    );
+  } else {
+    prompt('아래 내용을 복사하세요', text);
+  }
+}
+
+function toast(message) {
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = message;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 2200);
+}
+
+// ---------- 나의 기록 ----------
+function renderRecords() {
+  const records = Object.entries(loadRecords());
+
+  const body = records.length
+    ? records
+        .map(([, r]) => {
+          const ranking = Object.entries(r.wins)
+            .sort((a, b) => b[1].count - a[1].count)
+            .slice(0, 5);
+          const max = ranking[0][1].count;
+          return `
+          <div class="record-card">
+            <h3>${r.emoji} ${escapeHtml(r.title)} <small>${r.plays}판</small></h3>
+            <ol>
+              ${ranking
+                .map(
+                  ([text, w]) => `
+                <li>
+                  <span class="record-label">${w.emoji || '⭐'} ${escapeHtml(text)}</span>
+                  <span class="record-bar"><span style="width:${(w.count / max) * 100}%"></span></span>
+                  <span class="record-count">${w.count}회</span>
+                </li>`
+                )
+                .join('')}
+            </ol>
+          </div>`;
+        })
+        .join('')
+    : '<p class="panel muted">아직 기록이 없어요. 월드컵을 한 판 끝내면 우승 기록이 쌓여요!</p>';
+
+  render(`
+    <section class="records">
+      <h2>📊 나의 기록</h2>
+      <p class="muted">주제별로 내가 1위로 고른 선택지 TOP 5</p>
+      ${body}
+      <div class="result-actions">
+        <button class="btn" data-action="home">🏠 홈으로</button>
+        ${records.length ? '<button class="btn ghost" data-action="clear">기록 초기화</button>' : ''}
+      </div>
+    </section>
+  `);
+
+  app.querySelector('[data-action="home"]').addEventListener('click', renderHome);
+  app.querySelector('[data-action="clear"]')?.addEventListener('click', () => {
+    if (confirm('모든 기록을 지울까요?')) {
+      clearRecords();
+      renderRecords();
+    }
   });
 }
 
