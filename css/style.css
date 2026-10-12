@@ -237,14 +237,16 @@ h2 {
   transition: transform 0.2s, border-color 0.2s, opacity 0.3s;
 }
 
-.choice.left:hover {
-  border-color: var(--left);
-  transform: translateY(-6px) rotate(-1deg);
-}
+@media (hover: hover) {
+  .choice.left:hover {
+    border-color: var(--left);
+    transform: translateY(-6px) rotate(-1deg);
+  }
 
-.choice.right:hover {
-  border-color: var(--right);
-  transform: translateY(-6px) rotate(1deg);
+  .choice.right:hover {
+    border-color: var(--right);
+    transform: translateY(-6px) rotate(1deg);
+  }
 }
 
 .choice-emoji {
@@ -280,6 +282,7 @@ h2 {
 }
 
 .vs {
+  text-align: center;
   font-size: 1.6rem;
   font-weight: 900;
   color: var(--primary);
@@ -582,5 +585,143 @@ h2 {
   from {
     opacity: 0;
     transform: translate(-50%, 12px);
+  }
+}
+
+/* 애니메이션 */
+.choice {
+  animation: card-in 0.35s ease-out both;
+}
+
+.choice.right {
+  animation-delay: 0.06s;
+}
+
+@keyframes card-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.97);
+  }
+}
+
+.vs {
+  animation: vs-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes vs-pulse {
+  50% {
+    transform: scale(1.18);
+  }
+}
+
+.champion {
+  animation: champion-pop 0.6s cubic-bezier(0.2, 1.6, 0.4, 1) both;
+}
+
+.trophy {
+  animation: trophy-swing 1.2s ease-in-out 0.6s 2;
+}
+
+@keyframes champion-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes trophy-swing {
+  25% {
+    transform: rotate(-12deg);
+  }
+  75% {
+    transform: rotate(12deg);
+  }
+}
+
+.confetti {
+  position: fixed;
+  top: -40px;
+  font-size: 1.6rem;
+  pointer-events: none;
+  animation: confetti-fall linear forwards;
+  z-index: 5;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(110vh) rotate(540deg);
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  .confetti {
+    display: none;
+  }
+}
+
+/* 모바일: 카드를 위/아래로 */
+@media (max-width: 640px) {
+  #app {
+    padding-top: 20px;
+  }
+
+  .versus {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .choice {
+    min-height: 170px;
+    padding: 18px 14px;
+    gap: 6px;
+  }
+
+  .choice-emoji {
+    font-size: 2.8rem;
+  }
+
+  .choice-text {
+    font-size: 1.15rem;
+  }
+
+  .choice-key {
+    display: none;
+  }
+
+  .match-head h2 {
+    font-size: 1.6rem;
+  }
+
+  .topic-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .topic-card {
+    padding: 20px 10px;
+  }
+
+  .topic-desc {
+    font-size: 0.8rem;
+  }
+
+  .podium-item {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .record-label {
+    width: 100%;
+  }
+
+  .record-bar {
+    width: 70%;
   }
 }

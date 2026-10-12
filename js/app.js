@@ -288,6 +288,7 @@ function renderResult() {
     </section>
   `);
 
+  celebrate(champ.emoji || '🎉');
   app.querySelector('[data-action="again"]').addEventListener('click', () => startGame(t.size));
   app.querySelector('[data-action="home"]').addEventListener('click', renderHome);
   app.querySelector('[data-action="share"]').addEventListener('click', () => shareResult(t));
@@ -296,6 +297,21 @@ function renderResult() {
     bracket.hidden = !bracket.hidden;
     e.currentTarget.textContent = bracket.hidden ? '📋 대진표 보기' : '📋 대진표 접기';
   });
+}
+
+// 우승 이모지와 폭죽이 위에서 떨어지는 연출
+function celebrate(emoji) {
+  const pieces = [emoji, '🎉', '✨', '🎊'];
+  for (let i = 0; i < 28; i++) {
+    const el = document.createElement('span');
+    el.className = 'confetti';
+    el.textContent = pieces[i % pieces.length];
+    el.style.left = `${Math.random() * 100}vw`;
+    el.style.animationDuration = `${2 + Math.random() * 2}s`;
+    el.style.animationDelay = `${Math.random() * 0.8}s`;
+    document.body.appendChild(el);
+    setTimeout(() => el.remove(), 5000);
+  }
 }
 
 function shareResult(t) {
